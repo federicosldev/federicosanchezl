@@ -1,0 +1,98 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PostsCard from '../../components/PostsCard.astro';
+import FooterContact from '../../components/FooterContact.astro';
+
+export async function getStaticPaths() {
+    const blogEntries = await getCollection('blog');
+
+    return blogEntries.map(entry => ({
+        params: { id: entry.slug },
+        props: { entry },
+    }));
+}
+
+const { entry } = Astro.props;
+const { data, slug } = entry;
+const { title, img } = data;
+
+const { Content } = await render(entry);
+---
+
+<head>
+    <meta name="robots" content="noindex, nofollow" />
+</head>
+<Layout title={`${title} - Federico Sanchez`}>
+    <article
+        class="flex flex-col md:flex-row max-w-[1600px] mx-auto mb-20 md:mb-40 py-6 px-4 sm:px-6 lg:px-12 2xl:px-0 gap-6 mt-12"
+    >
+        <section
+            class="flex-1 bg-lightpurple-pattern px-6 py-12 md:px-28 md:py-20 rounded-xl flex flex-col items-center gap-4"
+        >
+            <img
+                class="w-full lg:w-[750px] max-h-[300px] lg:max-h-[500px] object-contain rounded-xl mb-7"
+                transition:name={`img-${slug}`}
+                src={`/${img}`}
+                alt={title}
+            />
+            <h1 class="text-4xl lg:text-8xl text-primary-purple uppercase mb-4">
+                {title}
+            </h1>
+            <div
+                class="text-primary-pink prose-lg sm:prose lg:prose-2xl prose-invert md:prose-invert"
+            >
+                <Content />
+            </div>
+        </section>
+
+        <aside class="w-full md:w-[380px]">
+            <h2 class="text-white text-4xl mb-7">Recomendado</h2>
+            <div class="bg-lightgray p-6 rounded-xl">
+                <img
+                    src="/prueba-blog.svg"
+                    alt="pruebablog"
+                    class="w-full rounded-lg"
+                />
+                <div class="flex justify-between items-center">
+                    <h3 class="text-white text-2xl">Federico Sánchez</h3>
+                    <a
+                        href="https://www.linkedin.com/in/federico-sanchez-lison/"
+                        target="_blank"
+                        class="text-primary-pink border transition hover:bg-primary-pink hover:text-primary-purple border-primary-pink py-2 px-3 rounded-lg"
+                        >Seguir</a
+                    >
+                </div>
+                <p class="text-lg">
+                    Recibirás artículos de calidad sobre frontend y todas las
+                    novedades en las que vaya trabajando. ¡Nada de spam 🙅‍♂️!
+                </p>
+            </div>
+            <div class="bg-lightgray p-6 rounded-xl flex flex-col gap-2 mt-5">
+                <h3 class="text-white text-4xl text-center">
+                    ¡Suscríbete a la newsletter!
+                </h3>
+                <p class="text-lg mb-2">
+                    Recibirás artículos de calidad sobre frontend y todas las
+                    novedades en las que vaya trabajando. ¡Nada de spam 🙅‍♂️!
+                </p>
+                <form action="" class="text-gray-400">
+                    <input
+                        type="text"
+                        placeholder="Tu email"
+                        class="w-full p-2 rounded-md mb-1 text-gray-800"
+                    />
+                    <input type="checkbox" class="mr-2" /><small
+                        >He leído y acepto la política de privacidad</small
+                    >
+                    <button
+                        class="text-white bg-primary-purple w-full p-2 rounded-md mt-2 text-xl hover:bg-primary-pink transition"
+                        >Suscribirme</button
+                    >
+                </form>
+            </div>
+            <PostsCard limit={2} />
+        </aside>
+    </article>
+    <FooterContact />
+</Layout>

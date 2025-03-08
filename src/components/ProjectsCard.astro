@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+    limit?: number;
+}
+
+const { limit } = Astro.props;
+
+const allProjects = await getCollection('projects');
+const projects = limit ? allProjects.slice(0, limit) : allProjects;
+---
+
+{
+    projects.map(project => {
+        const { slug, data } = project;
+        const { name, type, img, tag1, tag2 } = data;
+        return (
+            <article class="relative w-full mt-7 p-4 pt-0 bg-gradient-bg border border-primary-pink rounded-xl overflow-hidden flex flex-col items-center shadow-lg text-white">
+                <img
+                    transition:name={`img-${slug}`}
+                    src={`/${img}`}
+                    alt={name}
+                    class="w-[550px] rounded-lg object-cover mb-4"
+                />
+                <section class="w-full text-center flex items-center justify-between">
+                    <div class="text-left">
+                        <h3 class="text-4xl m-0 uppercase">{name}</h3>
+                        <p class="text-light-purple text-2xl mt-1">{type}</p>
+                    </div>
+                    <div class="rounded-full z-10 border border-primary-purple p-4 md:p-3 bg-primary-pink text-primary-pink mt-4 md:mt-0">
+                        <a href={`/proyecto/${slug}`}>
+                            <svg
+                                width="25"
+                                height="25"
+                                viewBox="0 0 45 45"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="hover:rotate-45 text-primary-pink ease-linear duration-300"
+                            >
+                                <path
+                                    d="M44 1L0.999996 44"
+                                    stroke="#6976DF"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                                <path
+                                    d="M44 39.7L44 1L5.3 0.999998"
+                                    stroke="#6976DF"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+                        </a>
+                    </div>
+                </section>
+                <section class="flex items-center gap-11 w-full mt-4 pt-2 border-t border-gray-700">
+                    <p class="text-xl text-white">{tag1}</p>
+                    <span class="text-xl text-white">•</span>
+                    <p class="text-xl text-white">{tag2}</p>
+                </section>
+            </article>
+        );
+    })
+}

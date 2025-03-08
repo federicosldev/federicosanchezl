@@ -1,0 +1,227 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Header from '../components/Header.astro';
+import CustomCursor from '../components/CustomCursor.astro';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/logo-header.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Darker+Grotesque&display=swap"
+			rel="stylesheet"
+		/>
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<ClientRouter />
+	</head>
+	<body>
+		<Header />
+		<CustomCursor />
+		<main>
+			<slot />
+			<script>
+				import { initLenis } from '../utils/lenis';
+				initLenis();
+			</script>
+		</main>
+	</body><style is:global>
+		@font-face {
+			font-family: 'Menda';
+			src: url('/fonts/menda-extrabold.woff') format('woff');
+			font-weight: bold;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Monigue';
+			src: url('/fonts/monigue.woff') format('woff');
+			font-weight: bold;
+			font-style: normal;
+		}
+		@font-face {
+			font-family: 'Cssglykeregular';
+			src: url('https://nueva-web-three.vercel.app/fonts/cssglykeregular.woff')
+				format('woff');
+			font-weight: bold;
+			font-style: normal;
+		}
+		h1,
+		h2,
+		h3,
+		h4 {
+			font-family: 'Monigue', sans-serif;
+		}
+		p,
+		li,
+		button,
+		form,
+		table {
+			font-family: 'Darker Grotesque', sans-serif;
+			font-optical-sizing: auto;
+			font-weight: <weight>;
+			font-style: normal;
+			color: #6976df;
+		}
+		a {
+			font-family: 'Darker Grotesque', sans-serif;
+			font-optical-sizing: auto;
+			font-weight: <weight>;
+			font-style: normal;
+		}
+		html {
+			font-family: system-ui, sans-serif;
+			background: #131217;
+			overflow-x: hidden;
+		}
+		body {
+			overflow-x: hidden !important;
+		}
+		body {
+			cursor:
+				url('/custom-cursor_1.png') 16 16,
+				auto;
+		}
+		ul li::marker {
+			color: #6976df;
+		}
+
+		ol li::marker {
+			color: #6976df;
+		}
+		/* body {
+			max-width: 1600px;
+			margin: 0 auto;
+		} */
+		/* CARRUSEL TEXT*/
+		@keyframes scroll {
+			0% {
+				transform: translateX(0);
+			}
+			100% {
+				transform: translateX(-50%);
+			}
+		}
+
+		@keyframes scroll-reverse {
+			0% {
+				transform: translateX(0);
+			}
+			100% {
+				transform: translateX(-50%);
+			}
+		}
+
+		.animate-scroll {
+			animation: scroll 20s linear infinite;
+		}
+
+		.animate-scroll-reverse {
+			animation: scroll-reverse 20s linear infinite;
+		}
+
+		.whitespace-nowrap {
+			white-space: nowrap;
+		}
+
+		/* Estilo para las flechas */
+		.swiper-button-next,
+		.swiper-button-prev {
+			color: #6976df !important;
+			font-size: 2rem;
+			z-index: 10;
+		}
+
+		.swiper-button-next:hover,
+		.swiper-button-prev:hover {
+			color: #efa6f5 !important;
+		}
+
+		.swiper-pagination-bullet {
+			background-color: #6976df !important;
+		}
+		.swiper-pagination-bullet:hover {
+			background-color: #efa6f5 !important;
+		}
+		@keyframes spin {
+			from {
+				transform: rotate(0deg);
+			}
+			to {
+				transform: rotate(360deg);
+			}
+		}
+		.animate-spin-slow {
+			animation: spin 8s linear infinite;
+		}
+		#floating-scroll .rotating-image {
+			transform-origin: center;
+		}
+		.wrapper {
+			overflow: hidden;
+		}
+		.demo-gallery ul {
+			display: flex;
+			width: fit-content;
+		}
+		.demo-gallery li {
+			flex-shrink: 0;
+		}
+		/* Cambiar el color de la barra de desplazamiento */
+		::-webkit-scrollbar {
+			width: 8px;
+		}
+
+		/* Cambiar el color del "pulgar" (la parte que se mueve) */
+		::-webkit-scrollbar-thumb {
+			background-color: #6976df;
+		}
+
+		/* Cambiar el color de la pista de la barra de desplazamiento */
+		::-webkit-scrollbar-track {
+			background-color: #131217;
+		}
+
+		input::placeholder {
+			color: #6976df;
+			opacity: 1;
+		}
+		input::-webkit-input-placeholder {
+			color: #6976df;
+		}
+		input:-ms-input-placeholder {
+			color: #6976df;
+		}
+		textarea::placeholder {
+			color: #6976df;
+			opacity: 1;
+		}
+		textarea::-webkit-input-placeholder {
+			color: #6976df;
+		}
+		textarea:-ms-input-placeholder {
+			color: #6976df;
+		}
+		::selection {
+			background-color: #6976df;
+			color: #fff;
+		}
+		.filter-btn.active {
+			@apply bg-primary-purple text-white;
+		}
+		.filter-btn:not(.active) {
+			@apply bg-purple-bg text-light-purple hover:bg-primary-purple;
+		}
+	</style>
+</html>

@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+const reviews = await getCollection('reviews');
+---
+
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"
+/>
+
+<div class="swiper w-full max-w-full px-4 lg:px-0">
+    <div class="swiper-wrapper">
+        {
+            reviews.map((review, index) => {
+                const { name, cargo, img, message } = review.data;
+                return (
+                    <div class="swiper-slide" key={index}>
+                        <article class="grid grid-cols-1 sm:grid-cols-2 items-center text-primary-purple min-h-[300px] sm:min-h-[400px]">
+                            <div class="sm:ml-14 flex flex-col justify-between">
+                                <p class="text-base sm:text-2xl text-primary-purple flex-grow">
+                                    {message}
+                                </p>
+                            </div>
+                            <div class="flex flex-col items-center justify-center p-6">
+                                <img
+                                    src={`/${img}`}
+                                    alt={name}
+                                    class="w-40 sm:w-72 rounded-full object-cover mb-4 border-[20px] sm:border-[30px] border-primary-purple"
+                                />
+                                <h3 class="text-4xl sm:text-4xl uppercase">
+                                    {name}
+                                </h3>
+                                <p class="text-primary-purple text-xl sm:text-2xl">
+                                    {cargo}
+                                </p>
+                            </div>
+                        </article>
+                    </div>
+                );
+            })
+        }
+    </div>
+
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-pagination"></div>
+</div>
+
+<!-- Importante: is:inline asegura que el script se ejecute en el orden correcto -->
+<script
+    is:inline
+    src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+<script>
+    // Esperar a que el script de Swiper se cargue completamente
+    function initSwiper() {
+        if (typeof Swiper !== 'undefined') {
+            new Swiper('.swiper', {
+                spaceBetween: 50,
+                slidesPerView: 1,
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                autoplay: {
+                    delay: 5000,
+                    disableOnInteraction: false,
+                },
+            });
+        } else {
+            // Si Swiper aún no está definido, intentar de nuevo en 100ms
+            setTimeout(initSwiper, 100);
+        }
+    }
+
+    // Iniciar cuando el DOM esté listo
+    document.addEventListener('astro:page-load', initSwiper);
+</script>

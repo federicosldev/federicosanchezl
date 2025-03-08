@@ -1,0 +1,142 @@
+<header
+    class="w-full p-4 mb-9 mt-5 lg:m-0 lg:p-12 flex gap-10 justify-between items-center"
+>
+    <a href="/">
+        <img
+            class="h-[60px] lg:h-[100px]"
+            src="/logo-header.svg"
+            alt="Logotipo Federico Sanchez - Desarrollo Web"
+        />
+    </a>
+    <!-- Botón de hamburguesa para móvil y tablet -->
+    <button
+        id="menuToggle"
+        class="lg:hidden text-[#6976DF] focus:outline-none"
+        aria-label="Abrir menú"
+    >
+        <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+        >
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- Menú móvil y tablet -->
+    <nav
+        id="mobileMenu"
+        class="fixed top-0 left-0 bottom-0 flex flex-col w-64 max-w-sm py-6 px-6 bg-dark overflow-y-auto transition-all duration-300 ease-in-out -translate-x-full z-10 lg:hidden"
+    >
+        <div class="flex items-center mb-8">
+            <button
+                id="closeMenu"
+                class="mr-2 text-[#6976DF]"
+                aria-label="Cerrar menú"
+            >
+                <svg
+                    class="w-6 h-6"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <ul class="flex flex-col space-y-4">
+            <li>
+                <img
+                    src="/federico-sanchez-marketing-digital.svg"
+                    alt="Logo de Federico Sanchez"
+                    class="h-[70px]"
+                />
+            </li>
+            <li
+                class="text-[#6976DF] hover:text-[#EFA6F5] text-xl cursor-pointer"
+            >
+                <a href="/servicios">Servicios</a>
+            </li>
+            <li
+                class="text-[#6976DF] hover:text-[#EFA6F5] text-xl cursor-pointer"
+            >
+                <a href="/sobre-mi">Sobre mi</a>
+            </li>
+            <li
+                class="text-[#6976DF] hover:text-[#EFA6F5] text-xl cursor-pointer"
+            >
+                <a href="/proyectos">Proyectos</a>
+            </li>
+            <li
+                class="text-[#6976DF] hover:text-[#EFA6F5] text-xl cursor-pointer"
+            >
+                <a href="/blog">Blog</a>
+            </li>
+        </ul>
+
+        <a
+            class="mt-auto bg-[#6976DF] text-white px-4 py-2 rounded-3xl hover:bg-[#EFA6F5] hover:text-[#6976DF] text-xl font-semibold text-center"
+            href="/contacto"
+        >
+            Hablemos
+        </a>
+    </nav>
+    <!-- Menú Desktop -->
+    <nav class="hidden lg:flex w-full justify-center">
+        <ul
+            class="flex w-full border border-gray-500 rounded-3xl p-5 gap-[100px] justify-center text-2xl font-semibold"
+        >
+            <li
+                class="text-[#6976DF] hover:text-primary-pink active:text-primary-pink cursor-pointer"
+            >
+                <a href="/servicios">Servicios</a>
+            </li>
+            <li
+                class="text-[#6976DF] hover:text-primary-pink active:text-primary-pink cursor-pointer"
+            >
+                <a href="/sobre-mi">Sobre mi</a>
+            </li>
+            <li class="text-[#6976DF] hover:text-[#EFA6F5] cursor-pointer">
+                <a href="/proyectos">Proyectos</a>
+            </li>
+            <li class="text-[#6976DF] hover:text-[#EFA6F5] cursor-pointer">
+                <a href="/blog">Blog</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Botón de contacto Desktop -->
+    <a
+        class="hidden lg:block bg-[#6976DF] text-white px-4 py-5 rounded-3xl hover:bg-[#EFA6F5] hover:text-[#6976DF] text-xl font-semibold"
+        href="/contacto">Hablemos</a
+    >
+</header>
+
+<script is:inline>
+    document.addEventListener('astro:page-load', () => {
+        const menuToggle = document.getElementById('menuToggle');
+        const closeMenu = document.getElementById('closeMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('-translate-x-full');
+        }
+
+        menuToggle.addEventListener('click', toggleMenu);
+        closeMenu.addEventListener('click', toggleMenu);
+
+        // Cerrar el menú al hacer clic en un enlace
+        const menuLinks = mobileMenu.querySelectorAll('a');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+    });
+</script>

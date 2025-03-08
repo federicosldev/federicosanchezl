@@ -1,0 +1,48 @@
+---
+import About from '../components/About.astro';
+import Hero from '../components/Hero.astro';
+import Projects from '../components/Projects.astro';
+import Services from '../components/Services.astro';
+import Reviews from '../components/Reviews.astro';
+import Layout from '../layouts/Layout.astro';
+import ProjectTest from '../components/ProjectTest.astro';
+import Footer from '../components/Footer.astro';
+
+const projects = [
+	{
+		title: 'Project 1',
+		image: '/proyecto-herbolario-de-maria.webp',
+	},
+	{
+		title: 'Project 2',
+		image: '/proyecto-clinica-veterinaria.webp',
+	},
+	{
+		title: 'Project 3',
+		image: '/proyecto-shield-sure.webp',
+	},
+
+	{
+		title: 'Project 4',
+		image: '/proyecto-windows-2.webp',
+	},
+	{
+		title: 'Project 5',
+		image: '/proyecto-herbolario-de-maria-3.webp',
+	},
+];
+---
+
+<head>
+	<meta name="robots" content="noindex, nofollow" />
+</head>
+
+<Layout title="Federico Sánchez - Front-End Developer">
+	<Hero />
+	<Services />
+	<About />
+	<ProjectTest projects={projects} />
+	<!-- <Projects /> -->
+	<Reviews />
+	<Footer />
+</Layout>
