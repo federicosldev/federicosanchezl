@@ -3,7 +3,6 @@ import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import { getImage } from 'astro:assets';
 import FooterContact from '../../components/FooterContact.astro';
-
 export async function getStaticPaths() {
     const projects = await getCollection('projects');
 
@@ -35,115 +34,122 @@ const optimizedImage = await getImage({
     <meta name="robots" content="noindex, nofollow" />
     <link rel="preload" href={optimizedImage.src} as="image" />
 </head>
-< title={`${name} - Federico Sanchez`}>
-<article
-    class="max-w-screen-xl px-4 lg:px-10 mx-auto flex flex-col lg:flex-col gap-8 lg:gap-12 py-10"
->
-    <img
-        src={optimizedImage.src || '/placeholder.svg'}
-        width={imageWidth}
-        height={imageHeight}
-        class="w-full lg:w-full lg:h-full object-cover rounded-xl"
-        alt={name}
-        loading="eager"
-        decoding="async"
-        transition:name={`img-${slug}`}
-    />
-    <main
-        class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-11 w-full mx-auto mb-20 md:mb-40 py-6 px-4 sm:px-6 lg:px-12 2xl:px-2"
+<Layout title={`${name} - Federico Sanchez`}>
+    <article
+        class="max-w-screen-xl px-4 lg:px-10 mx-auto flex flex-col lg:flex-col gap-8 lg:gap-12 py-10"
     >
-        <div class="col-span-2">
-            <h1 class="text-4xl lg:text-7xl text-primary-purple uppercase mb-5">
-                {name}
-            </h1>
-            <div
-                class="prose prose-sm sm:prose lg:prose-2xl prose-invert md:prose-invert prose-headings:text-primary-purple prose-p:text-primary-purple prose-strong:text-primary-purple prose-strong:font-bold mb-20"
-            >
-                <Content />
-            </div>
-            <a href="/proyectos" class="mb-6">
-                <button
-                    class="bg-gray-700 text-center w-full sm:w-48 rounded-2xl h-14 relative text-black text-xl font-semibold group"
-                    type="button"
+        <img
+            src={optimizedImage.src || '/placeholder.svg'}
+            width={imageWidth}
+            height={imageHeight}
+            class="w-full lg:w-full lg:h-full object-cover rounded-xl"
+            alt={name}
+            loading="eager"
+            decoding="async"
+            transition:name={`img-${slug}`}
+        />
+        <main
+            class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-11 w-full mx-auto mb-20 md:mb-40 py-6 px-4 sm:px-6 lg:px-12 2xl:px-2"
+        >
+            <div class="col-span-2">
+                <h1
+                    class="text-4xl lg:text-7xl text-primary-purple uppercase mb-5"
                 >
-                    <div
-                        class="bg-primary-pink rounded-xl h-12 w-1/4 flex items-center justify-center absolute left-1 top-[4px] group-hover:w-full sm:group-hover:w-[184px] z-10 duration-500"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 1024 1024"
-                            height="25px"
-                            width="25px"
-                        >
-                            <path
-                                d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"
-                                fill="#000000"></path>
-                            <path
-                                d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"
-                                fill="#000000"></path>
-                        </svg>
-                    </div>
-                    <p class="translate-x-2 text-primary-pink">Ver todos</p>
-                </button>
-            </a>
-        </div>
-
-        <aside class="col-span-1">
-            <div class="flex flex-wrap gap-3 mb-6 bg-lightgray p-6 rounded-2xl">
-                <h2 class="text-3xl text-white mb-0">
-                    Características del proyecto
-                </h2>
-                <hr class="border-zinc-400 w-full" />
-                <div class="flex flex-col flex-wrap gap-3">
-                    <h3 class="text-xl font-textFont text-zinc-400">
-                        Categorías del proyecto
-                    </h3>
-                    <p
-                        class="text-sm text-white lg:text-xl font-bold flex items-center gap-2"
-                    >
-                        <img
-                            src="/circle-check.svg"
-                            alt="check"
-                            class="w-6 h-6"
-                        />
-                        {type}
-                    </p>
-                    <p
-                        class="text-sm text-white lg:text-xl font-bold flex items-center gap-2"
-                    >
-                        <img
-                            src="/circle-check.svg"
-                            alt="check"
-                            class="w-6 h-6"
-                        />
-                        {tag1}, {tag2}
-                    </p>
+                    {name}
+                </h1>
+                <div
+                    class="prose prose-sm sm:prose lg:prose-2xl prose-invert md:prose-invert prose-headings:text-primary-purple prose-p:text-primary-purple prose-strong:text-primary-purple prose-strong:font-bold mb-20"
+                >
+                    <Content />
                 </div>
-
-                {
-                    techStack.length > 0 && (
-                        <div>
-                            <h3 class="text-xl font-textFont text-zinc-400 mb-4">
-                                Tecnologías utilizadas
-                            </h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                {techStack.map(tech => (
-                                    <div class="flex items-center justify-center gap-2 bg-[#211F26] rounded-full py-1 px-4">
-                                        <img
-                                            src={`/tech-logos/${tech.toLowerCase()}.svg`}
-                                            alt={`${tech} logo`}
-                                            class="w-4 h-4"
-                                            onerror="this.style.display='none'"
-                                        />
-                                        <p class="text-white text-lg">{tech}</p>
-                                    </div>
-                                ))}
-                            </div>
+                <a href="/proyectos" class="mb-6">
+                    <button
+                        class="bg-gray-700 text-center w-full sm:w-48 rounded-2xl h-14 relative text-black text-xl font-semibold group"
+                        type="button"
+                    >
+                        <div
+                            class="bg-primary-pink rounded-xl h-12 w-1/4 flex items-center justify-center absolute left-1 top-[4px] group-hover:w-full sm:group-hover:w-[184px] z-10 duration-500"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 1024 1024"
+                                height="25px"
+                                width="25px"
+                            >
+                                <path
+                                    d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"
+                                    fill="#000000"></path>
+                                <path
+                                    d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"
+                                    fill="#000000"></path>
+                            </svg>
                         </div>
-                    )
-                }
+                        <p class="translate-x-2 text-primary-pink">Ver todos</p>
+                    </button>
+                </a>
             </div>
-        </aside>
-    </main>
-</article>
-<FooterContact />
+
+            <aside class="col-span-1">
+                <div
+                    class="flex flex-wrap gap-3 mb-6 bg-lightgray p-6 rounded-2xl"
+                >
+                    <h2 class="text-3xl text-white mb-0">
+                        Características del proyecto
+                    </h2>
+                    <hr class="border-zinc-400 w-full" />
+                    <div class="flex flex-col flex-wrap gap-3">
+                        <h3 class="text-xl font-textFont text-zinc-400">
+                            Categorías del proyecto
+                        </h3>
+                        <p
+                            class="text-sm text-white lg:text-xl font-bold flex items-center gap-2"
+                        >
+                            <img
+                                src="/circle-check.svg"
+                                alt="check"
+                                class="w-6 h-6"
+                            />
+                            {type}
+                        </p>
+                        <p
+                            class="text-sm text-white lg:text-xl font-bold flex items-center gap-2"
+                        >
+                            <img
+                                src="/circle-check.svg"
+                                alt="check"
+                                class="w-6 h-6"
+                            />
+                            {tag1}, {tag2}
+                        </p>
+                    </div>
+
+                    {
+                        techStack.length > 0 && (
+                            <div>
+                                <h3 class="text-xl font-textFont text-zinc-400 mb-4">
+                                    Tecnologías utilizadas
+                                </h3>
+                                <div class="grid grid-cols-2 gap-4">
+                                    {techStack.map(tech => (
+                                        <div class="flex items-center justify-center gap-2 bg-[#211F26] rounded-full py-1 px-4">
+                                            <img
+                                                src={`/tech-logos/${tech.toLowerCase()}.svg`}
+                                                alt={`${tech} logo`}
+                                                class="w-4 h-4"
+                                                onerror="this.style.display='none'"
+                                            />
+                                            <p class="text-white text-lg">
+                                                {tech}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )
+                    }
+                </div>
+            </aside>
+        </main>
+    </article>
+    <FooterContact />
+</Layout>
