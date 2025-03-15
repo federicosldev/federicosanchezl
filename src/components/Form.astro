@@ -1,5 +1,5 @@
 ---
-// Tu componente Astro
+// Contact Form Component
 ---
 
 <div class="mt-9">
@@ -37,27 +37,61 @@
   <p id="status-message" class="text-white"></p>
 </div>
 
-<!-- Incluir EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
-></script>
+<!-- Cargar EmailJS con defer para asegurar que se carga -->
+<script
+  is:inline
+  src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
+  defer></script>
 
-<!-- IMPORTANTE: Inicializar EmailJS antes de cualquier uso -->
-<script>
-  // Asegurarse de que EmailJS está cargado
-  (function () {
-    // Inicializar EmailJS con tu PUBLIC KEY
-    emailjs.init('5RtqdNlugODDFGQcg');
-  })();
+<!-- Script de inicialización con type="module" y is:inline -->
+<script is:inline type="module">
+  // Esperar a que EmailJS esté disponible
+  function initEmailJS() {
+    if (typeof emailjs !== 'undefined') {
+      emailjs.init('5RtqdNlugODDFGQcg');
+    } else {
+      // Si emailjs no está disponible, intentar de nuevo en 100ms
+      setTimeout(initEmailJS, 100);
+    }
+  }
+
+  // Iniciar cuando el DOM esté listo
+  document.addEventListener('DOMContentLoaded', initEmailJS);
+
+  // Reiniciar cuando se navega entre páginas con View Transitions
+  document.addEventListener('astro:page-load', initEmailJS);
 </script>
 
-<!-- Script del formulario -->
+<!-- Script del formulario con type="module" -->
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
+  // Esperar a que EmailJS esté completamente cargado
+  function waitForEmailJS() {
+    return new Promise(resolve => {
+      function check() {
+        if (typeof window.emailjs !== 'undefined') {
+          resolve();
+        } else {
+          setTimeout(check, 100);
+        }
+      }
+      check();
+    });
+  }
+
+  // Función principal para inicializar el formulario
+  async function initForm() {
+    // Esperar a que EmailJS esté disponible
+    await waitForEmailJS();
+
     const form = document.getElementById('contact-form');
     const statusElement = document.getElementById('status-message');
 
     if (form) {
-      form.addEventListener('submit', function (e) {
+      // Eliminar listeners previos para evitar duplicados
+      const newForm = form.cloneNode(true);
+      form.parentNode.replaceChild(newForm, form);
+
+      newForm.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const submitButton = document.getElementById('submitButton');
@@ -65,35 +99,39 @@
           submitButton.disabled = true;
         }
 
-        // Asegurarse de que los parámetros estén correctos
-        emailjs
-          .sendForm(
-            'service_x9lnkbl', // Tu Service ID
-            'template_yuixtys', // Tu Template ID
-            this, // El formulario
-            '5RtqdNlugODDFGQcg', // Tu Public Key
-          )
-          .then(function (response) {
-            console.log('SUCCESS!', response.status, response.text);
-            if (statusElement) {
-              statusElement.textContent = 'Su mensaje fue enviado con éxito';
-              statusElement.className = 'text-green-500';
-            }
-            form.reset();
-          })
-          .catch(function (error) {
-            console.log('FAILED...', error);
-            if (statusElement) {
-              statusElement.textContent = 'No se pudo enviar: ' + error.text;
-              statusElement.className = 'text-red-500';
-            }
-          })
-          .finally(function () {
-            if (submitButton) {
-              submitButton.disabled = false;
-            }
-          });
+        try {
+          const response = await emailjs.sendForm(
+            'service_x9lnkbl',
+            'template_yuixtys',
+            this,
+            '5RtqdNlugODDFGQcg',
+          );
+
+          console.log('SUCCESS!', response.status, response.text);
+          if (statusElement) {
+            statusElement.textContent = 'Su mensaje fue enviado con éxito';
+            statusElement.className = 'text-green-500';
+          }
+          newForm.reset();
+        } catch (error) {
+          console.log('FAILED...', error);
+          if (statusElement) {
+            statusElement.textContent =
+              'No se pudo enviar: ' + (error.text || error.message);
+            statusElement.className = 'text-red-500';
+          }
+        } finally {
+          if (submitButton) {
+            submitButton.disabled = false;
+          }
+        }
       });
     }
-  });
+  }
+
+  // Iniciar cuando el DOM esté listo
+  document.addEventListener('DOMContentLoaded', initForm);
+
+  // Reiniciar cuando se navega entre páginas con View Transitions
+  document.addEventListener('astro:page-load', initForm);
 </script>
