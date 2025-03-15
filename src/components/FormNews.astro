@@ -45,7 +45,7 @@
 
             try {
                 statusDiv.textContent = 'Enviando...';
-                statusDiv.className = 'text-blue-600 text-sm mt-2';
+                statusDiv.className = 'text-blue-600 text-sm mt-2 block';
 
                 const formData = new FormData(form);
 
@@ -54,15 +54,25 @@
                     body: formData,
                 });
 
-                const data = await response.json();
+                let result;
+                try {
+                    const text = await response.text();
+                    result = text ? JSON.parse(text) : {};
+                } catch (parseError) {
+                    console.error('Error parsing response:', parseError);
+                    throw new Error(
+                        'Error al procesar la respuesta del servidor',
+                    );
+                }
 
-                if (response.ok) {
-                    statusDiv.textContent = '¡Suscripción exitosa!';
-                    statusDiv.className = 'text-green-600 text-sm mt-2';
+                if (response.ok && result.success) {
+                    statusDiv.textContent =
+                        result.message || '¡Suscripción exitosa!';
+                    statusDiv.className = 'text-green-600 text-sm mt-2 block';
                     form.reset();
                 } else {
                     throw new Error(
-                        data.error || 'Error al procesar la suscripción',
+                        result.error || 'Error al procesar la suscripción',
                     );
                 }
             } catch (error) {
@@ -71,7 +81,7 @@
                     error instanceof Error
                         ? error.message
                         : 'Error al procesar la suscripción';
-                statusDiv.className = 'text-red-600 text-sm mt-2';
+                statusDiv.className = 'text-red-600 text-sm mt-2 block';
             }
         });
     }
