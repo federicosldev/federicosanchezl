@@ -4,9 +4,7 @@ import vercel from '@astrojs/vercel/static';
 
 
 export default defineConfig({
-  integrations: [
-    tailwind(),
-  ],
+  integrations: [tailwind()],
   output: 'static',
   adapter: vercel(),
   image: {
