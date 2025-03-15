@@ -1,88 +1,123 @@
 ---
-// ContactForm.astro
+// Contact Form Component
 ---
 
-<form id="contact-form" class="space-y-4">
-    <div>
-        <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Tu email"
-            required
-            class="w-full p-2 rounded-md mb-1 text-gray-800"
-        />
-    </div>
+<div>
+    <form id="contact-form" class="flex flex-col gap-4 pb-5">
+        <div>
+            <input
+                type="email"
+                id="email"
+                name="user_email"
+                placeholder="Tu email"
+                required
+                class="w-full p-2 rounded-md mb-1 text-gray-800"
+            />
+        </div>
 
-    <div class="flex items-start">
-        <input
-            type="checkbox"
-            id="privacy"
-            name="privacy"
-            required
-            class="mr-2 mt-1"
-        />
-        <small>He leído y acepto la política de privacidad</small>
-    </div>
+        <div class="flex items-start">
+            <input
+                type="checkbox"
+                id="privacy"
+                name="privacy"
+                required
+                class="mr-2 mt-1"
+            />
+            <small>He leído y acepto la política de privacidad</small>
+        </div>
 
-    <button
-        type="submit"
-        class="text-white bg-primary-purple w-full p-2 rounded-md mt-2 text-xl hover:bg-primary-pink transition"
-    >
-        Suscribirme
-    </button>
+        <button
+            type="submit"
+            class="text-white bg-primary-purple w-full p-2 rounded-md mt-2 text-xl hover:bg-primary-pink transition"
+        >
+            Suscribirme
+        </button>
+    </form>
+    <p id="status-message" class="text-white"></p>
+</div>
 
-    <div id="form-status" class="hidden text-sm mt-2"></div>
-</form>
+<script
+    is:inline
+    src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
+    defer></script>
+
+<script is:inline type="module">
+    function initEmailJS() {
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init('5RtqdNlugODDFGQcg');
+        } else {
+            setTimeout(initEmailJS, 100);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initEmailJS);
+
+    document.addEventListener('astro:page-load', initEmailJS);
+</script>
 
 <script>
-    const form = document.getElementById('contact-form') as HTMLFormElement;
-    const statusDiv = document.getElementById('form-status');
-
-    if (form && statusDiv) {
-        form.addEventListener('submit', async e => {
-            e.preventDefault();
-
-            try {
-                statusDiv.textContent = 'Enviando...';
-                statusDiv.className = 'text-blue-600 text-sm mt-2 block';
-
-                const formData = new FormData(form);
-
-                const response = await fetch('/api/send-email', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                let result;
-                try {
-                    const text = await response.text();
-                    result = text ? JSON.parse(text) : {};
-                } catch (parseError) {
-                    console.error('Error parsing response:', parseError);
-                    throw new Error(
-                        'Error al procesar la respuesta del servidor',
-                    );
-                }
-
-                if (response.ok && result.success) {
-                    statusDiv.textContent =
-                        result.message || '¡Suscripción exitosa!';
-                    statusDiv.className = 'text-green-600 text-sm mt-2 block';
-                    form.reset();
+    function waitForEmailJS() {
+        return new Promise(resolve => {
+            function check() {
+                if (typeof window.emailjs !== 'undefined') {
+                    resolve();
                 } else {
-                    throw new Error(
-                        result.error || 'Error al procesar la suscripción',
-                    );
+                    setTimeout(check, 100);
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                statusDiv.textContent =
-                    error instanceof Error
-                        ? error.message
-                        : 'Error al procesar la suscripción';
-                statusDiv.className = 'text-red-600 text-sm mt-2 block';
             }
+            check();
         });
     }
+
+    async function initForm() {
+        await waitForEmailJS();
+
+        const form = document.getElementById('contact-form');
+        const statusElement = document.getElementById('status-message');
+
+        if (form) {
+            const newForm = form.cloneNode(true);
+            form.parentNode.replaceChild(newForm, form);
+
+            newForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const submitButton = document.getElementById('submitButton');
+                if (submitButton) {
+                    submitButton.disabled = true;
+                }
+
+                try {
+                    const response = await emailjs.sendForm(
+                        'service_x9lnkbl',
+                        'template_4s6rld4',
+                        this,
+                        '5RtqdNlugODDFGQcg',
+                    );
+
+                    console.log('SUCCESS!', response.status, response.text);
+                    if (statusElement) {
+                        statusElement.textContent = 'Te has suscrito con éxito';
+                        statusElement.className = 'text-green-500';
+                    }
+                    newForm.reset();
+                } catch (error) {
+                    console.log('FAILED...', error);
+                    if (statusElement) {
+                        statusElement.textContent =
+                            'No se pudo enviar: ' +
+                            (error.text || error.message);
+                        statusElement.className = 'text-red-500';
+                    }
+                } finally {
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                    }
+                }
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initForm);
+    document.addEventListener('astro:page-load', initForm);
 </script>
