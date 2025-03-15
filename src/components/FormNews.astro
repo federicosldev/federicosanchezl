@@ -1,0 +1,71 @@
+---
+// ContactForm.astro
+---
+
+<form id="contact-form" class="space-y-4">
+    <div>
+        <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Tu email"
+            required
+            class="w-full p-2 rounded-md mb-1 text-gray-800"
+        />
+    </div>
+
+    <div class="flex items-start">
+        <input
+            type="checkbox"
+            id="privacy"
+            name="privacy"
+            required
+            class="mr-2 mt-1"
+        />
+        <small>He leído y acepto la política de privacidad</small>
+    </div>
+
+    <button
+        type="submit"
+        class="text-white bg-primary-purple w-full p-2 rounded-md mt-2 text-xl hover:bg-primary-pink transition"
+    >
+        Suscribirme
+    </button>
+
+    <div id="form-status" class="hidden text-sm mt-2"></div>
+</form>
+
+<script>
+    const form = document.getElementById('contact-form') as HTMLFormElement;
+    const statusDiv = document.getElementById('form-status');
+
+    if (form && statusDiv) {
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+
+            try {
+                statusDiv.textContent = 'Enviando...';
+                statusDiv.className = 'text-blue-600 text-sm mt-2';
+
+                const formData = new FormData(form);
+
+                const response = await fetch('/api/send-email', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    statusDiv.textContent = '¡Suscripción exitosa!';
+                    statusDiv.className = 'text-green-600 text-sm mt-2';
+                    form.reset();
+                } else {
+                    throw new Error('Error al procesar la suscripción');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                statusDiv.textContent = 'Error al procesar la suscripción';
+                statusDiv.className = 'text-red-600 text-sm mt-2';
+            }
+        });
+    }
+</script>
