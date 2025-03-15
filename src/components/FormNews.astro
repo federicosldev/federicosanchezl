@@ -54,16 +54,23 @@
                     body: formData,
                 });
 
+                const data = await response.json();
+
                 if (response.ok) {
                     statusDiv.textContent = '¡Suscripción exitosa!';
                     statusDiv.className = 'text-green-600 text-sm mt-2';
                     form.reset();
                 } else {
-                    throw new Error('Error al procesar la suscripción');
+                    throw new Error(
+                        data.error || 'Error al procesar la suscripción',
+                    );
                 }
             } catch (error) {
                 console.error('Error:', error);
-                statusDiv.textContent = 'Error al procesar la suscripción';
+                statusDiv.textContent =
+                    error instanceof Error
+                        ? error.message
+                        : 'Error al procesar la suscripción';
                 statusDiv.className = 'text-red-600 text-sm mt-2';
             }
         });
