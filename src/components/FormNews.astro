@@ -23,7 +23,12 @@
                 required
                 class="mr-2 mt-1"
             />
-            <small>He leído y acepto la política de privacidad</small>
+            <small class="text-base"
+                >He leído y acepto la <a
+                    class="underline"
+                    href="/politica-de-privacidad">política de privacidad</a
+                ></small
+            >
         </div>
 
         <button
@@ -97,7 +102,7 @@
 
                     console.log('SUCCESS!', response.status, response.text);
                     if (statusElement) {
-                        statusElement.textContent = 'Te has suscrito con éxito';
+                        statusElement.textContent = '¡Gracias por suscribirte!';
                         statusElement.className = 'text-green-500';
                     }
                     newForm.reset();

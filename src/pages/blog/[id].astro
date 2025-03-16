@@ -15,13 +15,14 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { data, slug } = entry;
-const { title, img } = data;
+const { title, img, extracto } = data;
 
 const { Content } = await render(entry);
 ---
 
 <head>
     <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content={data.extracto} />
 </head>
 <Layout title={`${title} - Federico Sanchez`}>
     <article
