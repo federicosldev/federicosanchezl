@@ -6,7 +6,7 @@ import CustomCursor from '../components/CustomCursor.astro';
 interface Props {
 	title: string;
 }
-
+const googleTagID = 'G-NKT1KQQH2G';
 const { title } = Astro.props;
 ---
 
@@ -26,6 +26,19 @@ const { title } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<ClientRouter />
+		<script
+			async
+			src={`https://www.googletagmanager.com/gtag/js?id=${googleTagID}`}
+		></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag('js', new Date());
+
+			gtag('config', '${googleTagID}');
+		</script>
 	</head>
 	<body>
 		<Header />
@@ -223,6 +236,5 @@ const { title } = Astro.props;
 		.filter-btn:not(.active) {
 			@apply bg-purple-bg text-light-purple hover:bg-primary-purple;
 		}
-		
 	</style>
 </html>
