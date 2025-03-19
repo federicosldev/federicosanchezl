@@ -1,4 +1,4 @@
-import Lenis from '@studio-freight/lenis'
+import Lenis from '@studio-freight/lenis';
 
 export function initLenis() {
   const lenis = new Lenis({
@@ -11,12 +11,12 @@ export function initLenis() {
     smoothTouch: false,
     touchMultiplier: 2,
     infinite: false,
-  })
+  });
 
   function raf(time) {
-    lenis.raf(time)
-    requestAnimationFrame(raf)
+    lenis.raf(time);
+    requestAnimationFrame(raf);
   }
 
-  requestAnimationFrame(raf)
+  requestAnimationFrame(raf);
 }
