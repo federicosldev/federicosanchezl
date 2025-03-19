@@ -1,9 +1,13 @@
+---
+const currentPath = Astro.url.pathname;
+---
+
 <header
     class="w-full p-4 mb-9 mt-5 lg:m-0 lg:p-12 flex gap-10 justify-between items-center"
 >
     <a href="/">
         <img
-            class="h-[60px] lg:h-[100px]"
+            class="h-[50px] lg:h-[100px]"
             src="/federico-sanchez-front-end-developer.svg"
             alt="Logotipo Federico Sanchez - Desarrollo Web"
         />
@@ -61,22 +65,22 @@
                 />
             </li>
             <li
-                class="text-[#6976DF] hover:text-[#EFA6F5] text-xl cursor-pointer"
+                class="text-[#6976DF] hover:text-[#EFA6F5] active:text-primary-pink text-xl cursor-pointer"
             >
                 <a href="/servicios">Servicios</a>
             </li>
             <li
-                class="text-[#6976DF] hover:text-[#EFA6F5] text-xl cursor-pointer"
+                class="text-[#6976DF] hover:text-[#EFA6F5] active:text-primary-pink text-xl cursor-pointer"
             >
                 <a href="/sobre-mi">Sobre mi</a>
             </li>
             <li
-                class="text-[#6976DF] hover:text-[#EFA6F5] text-xl cursor-pointer"
+                class="text-[#6976DF] hover:text-[#EFA6F5] active:text-primary-pink text-xl cursor-pointer"
             >
                 <a href="/proyectos">Proyectos</a>
             </li>
             <li
-                class="text-[#6976DF] hover:text-[#EFA6F5] text-xl cursor-pointer"
+                class="text-[#6976DF] hover:text-[#EFA6F5] active:text-primary-pink text-xl cursor-pointer"
             >
                 <a href="/blog">Blog</a>
             </li>
@@ -95,19 +99,23 @@
             class="flex w-full border border-gray-500 rounded-3xl p-5 gap-[100px] justify-center text-2xl font-semibold"
         >
             <li
-                class="text-[#6976DF] hover:text-primary-pink active:text-primary-pink cursor-pointer"
+                class={`text-[#6976DF] hover:text-primary-pink cursor-pointer ${currentPath === '/servicios' ? 'text-primary-pink' : ''}`}
             >
                 <a href="/servicios">Servicios</a>
             </li>
             <li
-                class="text-[#6976DF] hover:text-primary-pink active:text-primary-pink cursor-pointer"
+                class={`text-[#6976DF] hover:text-primary-pink cursor-pointer ${currentPath === '/sobre-mi' ? 'text-primary-pink' : ''}`}
             >
-                <a href="/sobre-mi">Sobre mi</a>
+                <a href="/sobre-mi">Sobre mí</a>
             </li>
-            <li class="text-[#6976DF] hover:text-[#EFA6F5] cursor-pointer">
+            <li
+                class={`text-[#6976DF] hover:text-[#EFA6F5] cursor-pointer ${currentPath === '/proyectos' ? 'text-[#EFA6F5]' : ''}`}
+            >
                 <a href="/proyectos">Proyectos</a>
             </li>
-            <li class="text-[#6976DF] hover:text-[#EFA6F5] cursor-pointer">
+            <li
+                class={`text-[#6976DF] hover:text-[#EFA6F5] cursor-pointer ${currentPath === '/blog' ? 'text-[#EFA6F5]' : ''}`}
+            >
                 <a href="/blog">Blog</a>
             </li>
         </ul>
