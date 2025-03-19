@@ -1,0 +1,273 @@
+---
+
+---
+
+<div
+    id="cookie-banner"
+    class="fixed bottom-4 right-4 bg-white p-6 shadow-lg z-50 max-w-md rounded-xl hidden"
+>
+    <div class="flex flex-col">
+        <div class="flex justify-between items-center mb-3">
+            <h3 class="text-xl font-semibold text-gray-900">
+                Gestionar el consentimiento de cookies
+            </h3>
+            <button
+                id="close-cookie-banner"
+                class="text-gray-500 hover:text-gray-700"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                <span class="sr-only">Cerrar</span>
+            </button>
+        </div>
+
+        <p class="text-sm text-gray-600 mb-6">
+            Para proporcionar las mejores experiencias, utilizamos tecnologías
+            como las cookies para almacenar y/o acceder a la información del
+            dispositivo. Consentir estas tecnologías nos permitirá procesar
+            datos como el comportamiento de navegación o IDs únicos en este
+            sitio. No consentir o retirar el consentimiento, puede afectar
+            negativamente a ciertas características y funciones.
+        </p>
+
+        <div class="grid grid-cols-3 gap-2 mb-4">
+            <button
+                id="accept-cookies"
+                class="bg-primary-purple hover:bg-primary-pink text-white py-2 px-4 rounded text-sm font-medium transition-colors"
+            >
+                Aceptar
+            </button>
+            <button
+                id="reject-cookies"
+                class="bg-white hover:bg-gray-100 text-gray-800 py-2 px-4 rounded text-sm font-medium transition-colors border border-gray-300"
+            >
+                Denegar
+            </button>
+            <button
+                id="save-preferences"
+                class="bg-white hover:bg-gray-100 text-gray-800 py-2 px-4 rounded text-sm font-medium transition-colors border border-gray-300"
+            >
+                Ver preferencias
+            </button>
+        </div>
+
+        <div class="flex justify-center space-x-4 text-sm">
+            <a href="/cookies" class="text-primary-purple hover:underline"
+                >Política de Cookies</a
+            >
+            <a href="/privacidad" class="text-primary-purple hover:underline"
+                >Política de Privacidad</a
+            >
+            <a href="/legal" class="text-primary-purple hover:underline"
+                >Aviso Legal</a
+            >
+        </div>
+    </div>
+</div>
+
+<script>
+    // Función para comprobar si ya se han aceptado las cookies
+    function checkCookieConsent() {
+        return localStorage.getItem('cookieConsent');
+    }
+
+    // Función para establecer las cookies de Google Analytics
+    function setGACookies() {
+        // Aquí iría el código de inicialización de Google Analytics
+        // Por ejemplo:
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'NKT1KQQH2G'); // Reemplaza GA_MEASUREMENT_ID con tu ID real
+    }
+
+    // Función para mostrar el banner de cookies
+    function showCookieBanner() {
+        const banner = document.getElementById('cookie-banner');
+        if (banner) {
+            banner.classList.remove('hidden');
+        }
+    }
+
+    // Función para ocultar el banner de cookies
+    function hideCookieBanner() {
+        const banner = document.getElementById('cookie-banner');
+        if (banner) {
+            banner.classList.add('hidden');
+        }
+    }
+
+    // Función para guardar las preferencias de cookies
+    function saveCookiePreferences(acceptAll = false) {
+        const gaCheckbox = document.getElementById(
+            'ga-cookies',
+        ) as HTMLInputElement;
+        const preferences = {
+            analytics: true, // Siempre necesarias
+            ga: acceptAll || gaCheckbox.checked,
+        };
+
+        localStorage.setItem('cookieConsent', JSON.stringify(preferences));
+
+        // Si se aceptan las cookies de GA, inicializarlas
+        if (preferences.ga) {
+            setGACookies();
+        }
+
+        hideCookieBanner();
+    }
+
+    // Comprobar si ya se han aceptado las cookies al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+        const consent = checkCookieConsent();
+
+        if (!consent) {
+            // Si no hay consentimiento, mostrar el banner
+            showCookieBanner();
+        } else {
+            // Si hay consentimiento, aplicar las preferencias guardadas
+            const preferences = JSON.parse(consent);
+            if (preferences.ga) {
+                setGACookies();
+            }
+        }
+
+        // Event listeners para los botones
+        const acceptButton = document.getElementById('accept-cookies');
+        const rejectButton = document.getElementById('reject-cookies');
+        const preferencesButton = document.getElementById('save-preferences');
+        const closeButton = document.getElementById('close-cookie-banner');
+
+        if (acceptButton) {
+            acceptButton.addEventListener('click', () => {
+                saveCookiePreferences(true);
+            });
+        }
+
+        if (rejectButton) {
+            rejectButton.addEventListener('click', () => {
+                // Guardar preferencias rechazando todas las cookies no esenciales
+                const preferences = {
+                    analytics: true, // Siempre necesarias
+                    ga: false, // Rechazar GA
+                };
+
+                localStorage.setItem(
+                    'cookieConsent',
+                    JSON.stringify(preferences),
+                );
+                hideCookieBanner();
+            });
+        }
+
+        if (preferencesButton) {
+            preferencesButton.addEventListener('click', () => {
+                // Aquí podrías mostrar un modal con opciones detalladas
+                // Por ahora, simplemente mostraremos un panel de preferencias básico
+                const preferencesPanel = document.createElement('div');
+                preferencesPanel.className =
+                    'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                preferencesPanel.innerHTML = `
+            <div class="bg-white p-6 rounded-lg max-w-md w-full">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Preferencias de cookies</h3>
+                <button id="close-preferences" class="text-gray-500 hover:text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div class="mb-4">
+                <div class="flex items-center mb-3">
+                  <input type="checkbox" id="necessary-cookies" class="h-4 w-4" checked disabled>
+                  <label for="necessary-cookies" class="ml-2 block text-sm text-gray-600">
+                    Cookies necesarias
+                  </label>
+                </div>
+                <div class="flex items-center">
+                  <input type="checkbox" id="ga-cookies-pref" class="h-4 w-4">
+                  <label for="ga-cookies-pref" class="ml-2 block text-sm text-gray-600">
+                    Cookies de análisis (Google Analytics)
+                  </label>
+                </div>
+              </div>
+              <button id="save-cookie-preferences" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded text-sm font-medium transition-colors">
+                Guardar preferencias
+              </button>
+            </div>
+          `;
+
+                document.body.appendChild(preferencesPanel);
+
+                // Establecer el estado actual del checkbox
+                const consent = localStorage.getItem('cookieConsent');
+                if (consent) {
+                    const preferences = JSON.parse(consent);
+                    const gaCheckbox = document.getElementById(
+                        'ga-cookies-pref',
+                    ) as HTMLInputElement;
+                    if (gaCheckbox && preferences.ga) {
+                        gaCheckbox.checked = true;
+                    }
+                }
+
+                // Manejar el cierre del panel
+                const closePreferences =
+                    document.getElementById('close-preferences');
+                if (closePreferences) {
+                    closePreferences.addEventListener('click', () => {
+                        document.body.removeChild(preferencesPanel);
+                    });
+                }
+
+                // Manejar el guardado de preferencias
+                const savePreferencesBtn = document.getElementById(
+                    'save-cookie-preferences',
+                );
+                if (savePreferencesBtn) {
+                    savePreferencesBtn.addEventListener('click', () => {
+                        const gaCheckbox = document.getElementById(
+                            'ga-cookies-pref',
+                        ) as HTMLInputElement;
+                        const preferences = {
+                            analytics: true,
+                            ga: gaCheckbox ? gaCheckbox.checked : false,
+                        };
+
+                        localStorage.setItem(
+                            'cookieConsent',
+                            JSON.stringify(preferences),
+                        );
+
+                        // Si se aceptan las cookies de GA, inicializarlas
+                        if (preferences.ga) {
+                            setGACookies();
+                        }
+
+                        document.body.removeChild(preferencesPanel);
+                        hideCookieBanner();
+                    });
+                }
+            });
+        }
+
+        if (closeButton) {
+            closeButton.addEventListener('click', () => {
+                hideCookieBanner();
+            });
+        }
+    });
+</script>

@@ -2,6 +2,7 @@
 import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import CustomCursor from '../components/CustomCursor.astro';
+import CookieBanner from '../components/CookieBanner.astro';
 
 interface Props {
 	title: string;
@@ -30,7 +31,7 @@ const { title } = Astro.props;
 		<title>{title}</title>
 		<ClientRouter />
 
-		<script
+		<!-- <script
 			async
 			src="https://www.googletagmanager.com/gtag/js?id=G-NKT1KQQH2G"
 		></script>
@@ -42,13 +43,18 @@ const { title } = Astro.props;
 			gtag('js', new Date());
 
 			gtag('config', 'G-NKT1KQQH2G');
-		</script>
+		</script> -->
+		<script
+			src="https://analytics.ahrefs.com/analytics.js"
+			data-key="WlMxEDp7J/0hRGRDfu2Jww"
+			async></script>
 	</head>
 	<body>
 		<Header />
 		<CustomCursor />
 		<main>
 			<slot />
+			<CookieBanner />
 			<script>
 				import { initLenis } from '../utils/lenis';
 				initLenis();
