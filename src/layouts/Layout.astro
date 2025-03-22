@@ -56,6 +56,60 @@ const { title } = Astro.props;
 			<script>
 				import { initLenis } from '../utils/lenis';
 				initLenis();
+
+				const style = document.createElement('style');
+
+				style.textContent = `
+        .section-header {
+          opacity: 0 !important;
+          visibility: hidden !important;
+        }
+      `;
+
+				document.head.appendChild(style);
+				import { initTitleAnimations } from '../components/title-animation.js';
+
+				// Function to initialize animations with retry mechanism
+				function initWithRetry() {
+					try {
+						// Try to initialize animations
+						initTitleAnimations();
+					} catch (error) {
+						console.error('Error initializing animations:', error);
+
+						// If there was an error, try again after a short delay
+						setTimeout(initWithRetry, 100);
+					}
+				}
+
+				// Initialize on page load with a small delay to ensure DOM is fully ready
+				document.addEventListener('DOMContentLoaded', () => {
+					// Small delay to ensure everything is rendered properly
+					setTimeout(initWithRetry, 50);
+				});
+
+				// For Astro view transitions
+				document.addEventListener('astro:page-load', () => {
+					// Small delay to ensure everything is rendered properly
+					setTimeout(initWithRetry, 50);
+				});
+
+				// Backup initialization for page refresh cases
+				window.addEventListener('load', () => {
+					// Check if section headers are still hidden after page is fully loaded
+					const headers =
+						document.querySelectorAll('.section-header');
+					if (headers.length > 0) {
+						const headerStyle = window.getComputedStyle(headers[0]);
+						if (
+							headerStyle.opacity === '0' ||
+							headerStyle.visibility === 'hidden'
+						) {
+							// Headers are still hidden, try to initialize again
+							setTimeout(initWithRetry, 50);
+						}
+					}
+				});
 			</script>
 		</main>
 	</body><style is:global>
@@ -243,6 +297,44 @@ const { title } = Astro.props;
 		}
 		.filter-btn:not(.active) {
 			@apply bg-purple-bg text-light-purple hover:bg-primary-purple;
+		}
+		/* Hide animated elements until animations are initialized */
+		.animated-title,
+		.animated-text {
+			visibility: hidden;
+		}
+
+		/* Show elements once animations are ready */
+		.animations-ready .animated-title,
+		.animations-ready .animated-text {
+			visibility: visible;
+		}
+
+		/* Title specific styles - overflow visible */
+		.animated-title .word-wrapper {
+			display: inline-block;
+			overflow: visible; /* Titles have visible overflow */
+			vertical-align: top;
+		}
+
+		/* Paragraph specific styles - overflow hidden */
+		.animated-text .word-wrapper {
+			display: inline-block;
+			overflow: hidden; /* Paragraphs have hidden overflow */
+			vertical-align: top;
+		}
+
+		.animated-title .word,
+		.animated-text .word {
+			display: inline-block;
+		}
+		.section-header {
+			opacity: 0;
+			visibility: hidden;
+		}
+		.home-image {
+			position: relative;
+			z-index: 1;
 		}
 	</style>
 </html>
