@@ -8,9 +8,28 @@ gsap.registerPlugin(ScrollTrigger)
 export function isHomeWithLoading() {
   const loadingScreen = document.getElementById('loading-screen');
   return loadingScreen && loadingScreen.style.display !== 'none';
-  
 }
-isHomeWithLoading();
+
+// Función para asegurar que el contenido sea visible
+export function makeContentVisible() {
+  // Hacer que los section headers sean visibles
+  const headers = document.querySelectorAll('.section-header');
+  headers.forEach(header => {
+    header.style.cssText = 'opacity: 1 !important; visibility: visible !important;';
+  });
+  
+  // Hacer que los elementos animados sean visibles
+  const animatedElements = document.querySelectorAll('.animated-title, .animated-text');
+  animatedElements.forEach(element => {
+    element.style.cssText = 'opacity: 1 !important; visibility: visible !important;';
+    
+    // Hacer que las palabras sean visibles
+    const words = element.querySelectorAll('.word');
+    words.forEach(word => {
+      word.style.cssText = 'opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important;';
+    });
+  });
+}
 
 function wrapWordsPreservingStructure(element) {
   // Handle elements with child nodes (like spans)
@@ -51,40 +70,38 @@ function wrapWordsPreservingStructure(element) {
   }
 }
 
-// Pre-hide all section headers before any JavaScript runs
-document.addEventListener("DOMContentLoaded", () => {
-  // Add a style tag to hide section headers immediately
-  const style = document.createElement("style")
-  style.textContent = `
-    .section-header {
-      opacity: 0;
-    }
-  `
-  document.head.appendChild(style)
-})
-
 export function initTitleAnimations() {
-  // Add a class to the body when animations are initialized
-  document.body.classList.add("animations-ready")
+  // Primero asegurarse de que todo sea visible (como respaldo)
+  makeContentVisible();
+  
+  // Luego intentar ejecutar animaciones
+  try {
+    // Add a class to the body when animations are initialized
+    document.body.classList.add("animations-ready")
 
-  // Initialize title animations
-  initAnimatedElements(".animated-title", {
-    staggerValue: 0.1,
-    durationValue: 1,
-    delayValue: 0,
-    endPosition: "bottom top+=100", // Full animation range for titles
-  })
+    // Initialize title animations
+    initAnimatedElements(".animated-title", {
+      staggerValue: 0.1,
+      durationValue: 1,
+      delayValue: 0,
+      endPosition: "bottom top+=100", // Full animation range for titles
+    })
 
-  // Initialize paragraph animations
-  initAnimatedElements(".animated-text", {
-    staggerValue: 0.02,
-    durationValue: 1,
-    delayValue: 1,
-    endPosition: "center center", // End earlier for paragraphs
-  })
+    // Initialize paragraph animations
+    initAnimatedElements(".animated-text", {
+      staggerValue: 0.02,
+      durationValue: 1,
+      delayValue: 1,
+      endPosition: "center center", // End earlier for paragraphs
+    })
 
-  // Initialize section header animations - load immediately
-  initSectionHeaderAnimations()
+    // Initialize section header animations - load immediately
+    initSectionHeaderAnimations()
+  } catch (error) {
+    console.error("Animation error:", error);
+    // Si algo falla, asegurarse de que el contenido sea visible
+    makeContentVisible();
+  }
 }
 
 // Function for scroll-triggered animations
@@ -193,3 +210,95 @@ function initSectionHeaderAnimations() {
   })
 }
 
+// Function to make section headers visible on mobile
+export function showSectionHeadersOnMobile() {
+  const sectionHeaders = document.querySelectorAll(".section-header")
+  
+  // Make sure all section headers are immediately visible
+  gsap.set(".section-header", { opacity: 1, visibility: "visible" })
+  
+  // Also make all words inside section headers visible
+  sectionHeaders.forEach(header => {
+    // First apply the word wrapping to ensure structure is consistent
+    wrapWordsPreservingStructure(header)
+    
+    // Then make all words visible
+    const words = header.querySelectorAll(".word")
+    gsap.set(words, { 
+      y: 0, 
+      opacity: 1,
+      display: "inline-block"
+    })
+    
+    // Make word wrappers visible and properly styled
+    const wordWrappers = header.querySelectorAll(".word-wrapper")
+    gsap.set(wordWrappers, {
+      overflow: "visible",
+      verticalAlign: "top",
+      display: "inline-block"
+    })
+  })
+  
+  // Also directly set inline styles to override any !important styles
+  sectionHeaders.forEach(header => {
+    header.style.cssText = 'opacity: 1 !important; visibility: visible !important;';
+  })
+}
+
+// Function to make animated elements visible on mobile
+export function showAnimatedElementsOnMobile() {
+  const animatedElements = document.querySelectorAll(".animated-title, .animated-text")
+  
+  animatedElements.forEach(element => {
+    // Apply word wrapping to ensure structure is consistent
+    wrapWordsPreservingStructure(element)
+    
+    // Make all words visible
+    const words = element.querySelectorAll(".word")
+    gsap.set(words, { 
+      y: 0, 
+      opacity: 1,
+      display: "inline-block"
+    })
+    
+    // Make word wrappers visible and properly styled
+    const wordWrappers = element.querySelectorAll(".word-wrapper")
+    gsap.set(wordWrappers, {
+      overflow: "visible",
+      verticalAlign: "top",
+      display: "inline-block"
+    })
+    
+    // Also directly set inline styles to override any !important styles
+    element.style.cssText = 'opacity: 1 !important; visibility: visible !important;';
+    words.forEach(word => {
+      word.style.cssText = 'opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important;';
+    });
+  })
+}
+
+// Main function to initialize animations based on screen width
+export function DOMReady() {
+  console.log("DOM Ready - Checking screen width")
+  
+  // First make everything visible as a fallback
+  makeContentVisible();
+  
+  if (window.innerWidth > 1200) {
+    // Desktop - run animations
+    console.log("Desktop detected - Running animations")
+    initTitleAnimations()
+    // Add other desktop-only animations here
+  } else {
+    // Mobile - make elements visible without animations
+    console.log("Mobile detected - Skipping animations")
+    showSectionHeadersOnMobile()
+    showAnimatedElementsOnMobile()
+    // Add other mobile-specific code here
+  }
+  
+  // Common functions that run on both desktop and mobile
+  // Add your common functions here, like:
+  // menu()
+  // marquee()
+}
