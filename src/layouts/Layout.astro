@@ -57,110 +57,61 @@ const { title } = Astro.props;
 				import { initLenis } from '../utils/lenis';
 				import { DOMReady } from '../components/title-animation.js';
 
-				// Initialize Lenis for smooth scrolling
+				// Inicializar Lenis para scroll suave
 				initLenis();
 
-				// Store a reference to the style tag so we can remove it if needed
-				let sectionHeaderStyle;
-
-				// Only add the style tag on desktop
-				if (window.innerWidth > 1200) {
-					sectionHeaderStyle = document.createElement('style');
-					sectionHeaderStyle.textContent = `
-    .section-header {
-      opacity: 0 !important;
-      visibility: hidden !important;
-    }
-  `;
-					document.head.appendChild(sectionHeaderStyle);
+				// Asegurar que los elementos sean visibles antes de animar
+				function makeContentVisible() {
+					document
+						.querySelectorAll(
+							'.section-header, .animated-title, .animated-text',
+						)
+						.forEach(el => {
+							el.style.opacity = '1';
+							el.style.visibility = 'visible';
+						});
 				}
 
-				// Function to initialize animations with retry mechanism
 				function initWithRetry() {
 					try {
-						// Use our new DOMReady function that checks screen width
 						DOMReady();
 					} catch (error) {
-						console.error('Error initializing animations:', error);
-
-						// If there was an error, try again after a short delay
+						console.error(
+							'Error inicializando animaciones:',
+							error,
+						);
 						setTimeout(initWithRetry, 100);
 					}
 				}
 
-				// Initialize on page load with a small delay to ensure DOM is fully ready
+				// Ejecutar animaciones al cargar el DOM
 				document.addEventListener('DOMContentLoaded', () => {
-					// Small delay to ensure everything is rendered properly
+					makeContentVisible();
 					setTimeout(initWithRetry, 50);
 				});
 
-				// For Astro view transitions
+				// Para transiciones de página en Astro
 				document.addEventListener('astro:page-load', () => {
-					// Small delay to ensure everything is rendered properly
-					setTimeout(initWithRetry, 50);
-
-					// Check screen width again in case of responsive changes during navigation
-					if (window.innerWidth <= 1200 && sectionHeaderStyle) {
-						sectionHeaderStyle.remove();
-						sectionHeaderStyle = null;
-					}
+					setTimeout(() => {
+						makeContentVisible();
+						initWithRetry();
+						ScrollTrigger.refresh(); // Refrescar GSAP ScrollTrigger
+					}, 50);
 				});
 
-				// Backup initialization for page refresh cases
+				// Backup para asegurar visibilidad tras carga completa
 				window.addEventListener('load', () => {
-					// Check if section headers are still hidden after page is fully loaded
-					const headers =
-						document.querySelectorAll('.section-header');
-
-					if (headers.length > 0) {
-						if (window.innerWidth <= 1200) {
-							// On mobile, make sure headers are visible
-							headers.forEach(header => {
-								header.style.opacity = '1';
-								header.style.visibility = 'visible';
-							});
-
-							// Remove the style tag if it exists
-							if (sectionHeaderStyle) {
-								sectionHeaderStyle.remove();
-								sectionHeaderStyle = null;
-							}
-						} else {
-							// On desktop, check if headers are still hidden
-							const headerStyle = window.getComputedStyle(
-								headers[0],
-							);
-							if (
-								headerStyle.opacity === '0' ||
-								headerStyle.visibility === 'hidden'
-							) {
-								// Headers are still hidden, try to initialize again
-								setTimeout(initWithRetry, 50);
-							}
-						}
+					makeContentVisible();
+					if (window.innerWidth > 1200) {
+						setTimeout(initWithRetry, 50);
 					}
 				});
 
-				// Handle resize events
+				// Manejo de resize para alternar visibilidad en mobile/desktop
 				window.addEventListener('resize', () => {
-					const isDesktop = window.innerWidth > 1200;
-
-					// If switching to mobile, make sure headers are visible
-					if (!isDesktop && sectionHeaderStyle) {
-						sectionHeaderStyle.remove();
-						sectionHeaderStyle = null;
-
-						// Make all section headers visible
-						document
-							.querySelectorAll('.section-header')
-							.forEach(header => {
-								header.style.opacity = '1';
-								header.style.visibility = 'visible';
-							});
+					if (window.innerWidth <= 1200) {
+						makeContentVisible();
 					}
-
-					// If switching to desktop and no animations have run yet,
-					// we could re-add the style and run animations, but that's optional
 				});
 			</script>
 		</main>
@@ -387,6 +338,30 @@ const { title } = Astro.props;
 		.home-image {
 			position: relative;
 			z-index: 1;
+		}
+		/* Asegurarse de que los contenedores no corten el contenido durante la animación */
+		.hero-title,
+		.hero-img,
+		.hero-text {
+			overflow: visible !important;
+		}
+
+		/* Asegurarse de que los contenedores padre también tengan overflow visible */
+		.hero-section,
+		.hero-container,
+		[class*='hero-'] {
+			overflow: visible !important;
+		}
+
+		/* Estilos para la animación de palabras */
+		.hero-text .word-wrapper {
+			display: inline-block;
+			overflow: hidden;
+			margin-right: 0.25em;
+		}
+
+		.hero-text .word {
+			display: inline-block;
 		}
 	</style>
 </html>
