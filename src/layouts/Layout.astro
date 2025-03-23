@@ -57,10 +57,8 @@ const { title } = Astro.props;
 				import { initLenis } from '../utils/lenis';
 				import { DOMReady } from '../components/title-animation.js';
 
-				// Inicializar Lenis para scroll suave
 				initLenis();
 
-				// Asegurar que los elementos sean visibles antes de animar
 				function makeContentVisible() {
 					document
 						.querySelectorAll(
@@ -84,22 +82,19 @@ const { title } = Astro.props;
 					}
 				}
 
-				// Ejecutar animaciones al cargar el DOM
 				document.addEventListener('DOMContentLoaded', () => {
 					makeContentVisible();
 					setTimeout(initWithRetry, 50);
 				});
 
-				// Para transiciones de página en Astro
 				document.addEventListener('astro:page-load', () => {
 					setTimeout(() => {
 						makeContentVisible();
 						initWithRetry();
-						ScrollTrigger.refresh(); // Refrescar GSAP ScrollTrigger
+						ScrollTrigger.refresh();
 					}, 50);
 				});
 
-				// Backup para asegurar visibilidad tras carga completa
 				window.addEventListener('load', () => {
 					makeContentVisible();
 					if (window.innerWidth > 1200) {
@@ -107,7 +102,6 @@ const { title } = Astro.props;
 					}
 				});
 
-				// Manejo de resize para alternar visibilidad en mobile/desktop
 				window.addEventListener('resize', () => {
 					if (window.innerWidth <= 1200) {
 						makeContentVisible();
@@ -301,29 +295,23 @@ const { title } = Astro.props;
 		.filter-btn:not(.active) {
 			@apply bg-purple-bg text-light-purple hover:bg-primary-purple;
 		}
-		/* Hide animated elements until animations are initialized */
 		.animated-title,
 		.animated-text {
 			visibility: hidden;
 		}
-
-		/* Show elements once animations are ready */
 		.animations-ready .animated-title,
 		.animations-ready .animated-text {
 			visibility: visible;
 		}
-
-		/* Title specific styles - overflow visible */
 		.animated-title .word-wrapper {
 			display: inline-block;
-			overflow: visible; /* Titles have visible overflow */
+			overflow: visible;
 			vertical-align: top;
 		}
 
-		/* Paragraph specific styles - overflow hidden */
 		.animated-text .word-wrapper {
 			display: inline-block;
-			overflow: hidden; /* Paragraphs have hidden overflow */
+			overflow: hidden;
 			vertical-align: top;
 		}
 
@@ -339,27 +327,22 @@ const { title } = Astro.props;
 			position: relative;
 			z-index: 1;
 		}
-		/* Asegurarse de que los contenedores no corten el contenido durante la animación */
+
 		.hero-title,
 		.hero-img,
 		.hero-text {
 			overflow: visible !important;
 		}
-
-		/* Asegurarse de que los contenedores padre también tengan overflow visible */
 		.hero-section,
 		.hero-container,
 		[class*='hero-'] {
 			overflow: visible !important;
 		}
-
-		/* Estilos para la animación de palabras */
 		.hero-text .word-wrapper {
 			display: inline-block;
 			overflow: hidden;
 			margin-right: 0.25em;
 		}
-
 		.hero-text .word {
 			display: inline-block;
 		}

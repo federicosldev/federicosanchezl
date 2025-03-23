@@ -42,7 +42,6 @@ function wrapWordsPreservingStructure(element) {
     }
 }
 
-// Inicialización de animaciones principales
 export function initTitleAnimations() {
     console.log("Inicializando animaciones...");
 
@@ -72,7 +71,6 @@ export function initTitleAnimations() {
     }
 }
 
-// Función para animar elementos con ScrollTrigger
 function initAnimatedElements(selector, options = {}) {
     const { staggerValue = 0.1, durationValue = 1, delayValue = 0, endPosition = "bottom top+=100" } = options;
 
@@ -113,7 +111,6 @@ function initAnimatedElements(selector, options = {}) {
     });
 }
 
-// Animación para los títulos de sección (no depende de ScrollTrigger)
 function initSectionHeaderAnimations() {
   const sectionHeaders = document.querySelectorAll(".section-header");
 
@@ -143,7 +140,6 @@ function initSectionHeaderAnimations() {
   });
 }
 
-// Asegurar visibilidad en móviles sin animaciones
 export function showSectionHeadersOnMobile() {
     document.querySelectorAll('.section-header').forEach(header => {
         header.style.opacity = '1';
@@ -199,20 +195,18 @@ export function DOMReady() {
 
   // Función para animar párrafos palabra por palabra
   function paragraphs() {
-    // Si no estamos en desktop, no aplicamos la animación
     if (!isDesktop()) return;
 
     const paragraphs = Array.from(document.querySelectorAll(".hero-text p"));
 
     paragraphs.forEach((paragraph) => {
-      // check if also have the class autoanim
       const isAutoanim = paragraph.parentNode.classList.contains("autoanim");
       
       wrapEachWord(paragraph);
       gsap.set(paragraph.querySelectorAll("span"), { display: "inline-block" });
       gsap.set(paragraph.querySelectorAll("span.word-wrapper"), {
         overflow: "hidden",
-        paddingTop: "0.2em", // permite que se vean los acentos
+        paddingTop: "0.2em", 
       });
       
       // Crear un ID único para este ScrollTrigger
@@ -226,7 +220,7 @@ export function DOMReady() {
             end: "center center",
             markers: false,
             pin: false,
-            id: triggerId, // Asignar ID para poder eliminarlo específicamente
+            id: triggerId, 
             scrub: isAutoanim ? false : 2,
             toggleActions: "play none none reverse", // onEnter / onLeave / onEnterBack / onLeaveBack
           },
@@ -242,15 +236,12 @@ export function DOMReady() {
     });
   }
 
-  // Nueva función para animar títulos con la clase animTitle
   function animateTitles() {
-    // Si no estamos en desktop, no aplicamos la animación
     if (!isDesktop()) return;
 
     const animTitles = document.querySelectorAll(".animTitle");
     
     animTitles.forEach((title, index) => {
-      // Configuración inicial
       gsap.set(title, { 
         opacity: 0,
         y: 30,
@@ -258,18 +249,16 @@ export function DOMReady() {
         overflow: "visible"
       });
       
-      // Crear un ID único para este ScrollTrigger
       const triggerId = `animTitle-${index}`;
       
-      // Crear timeline para cada título
       gsap.timeline({
         scrollTrigger: {
           trigger: title,
-          start: "top bottom-=100", // Comienza cuando el título está 100px por debajo de la ventana
-          end: "top center", // Termina cuando el título está en el centro de la ventana
+          start: "top bottom-=100", 
+          end: "top center", 
           markers: false,
-          id: triggerId, // Asignar ID para poder eliminarlo específicamente
-          toggleActions: "play none none reverse", // play on enter, reverse on leave back
+          id: triggerId, 
+          toggleActions: "play none none reverse", 
         }
       })
       .to(title, {
@@ -284,7 +273,6 @@ export function DOMReady() {
 
   // Función de inicialización de la animación principal
   function initAnimation() {
-    // Si no estamos en desktop, hacemos visibles los elementos sin animación
     if (!isDesktop()) {
       gsap.set(".hero-title, .hero-img, .hero-text, .animTitle", { 
         opacity: 1,
@@ -294,14 +282,13 @@ export function DOMReady() {
       return;
     }
 
-    // Crear una timeline para coordinar las animaciones
+    // Crear un timeline para coordinar las animaciones
     const tl = gsap.timeline({
       defaults: { 
         ease: "power3.out",
       }
     });
 
-    // Configuración inicial mejorada para evitar cortes
     gsap.set(".hero-title, .hero-img", { 
       opacity: 0,
       y: 30,
@@ -309,85 +296,71 @@ export function DOMReady() {
       overflow: "visible"
     });
 
-    // Para hero-text, solo configuramos la opacidad inicial
     gsap.set(".hero-text", { 
       opacity: 0,
       overflow: "visible"
     });
 
-    // Animación de persiana para los títulos con clipPath ajustado
     tl.to(".hero-title", {
       opacity: 1,
       y: 0,
-      clipPath: "polygon(0 -20%, 100% -20%, 100% 120%, 0 120%)", // Extendemos más allá de los bordes
+      clipPath: "polygon(0 -20%, 100% -20%, 100% 120%, 0 120%)", 
       duration: 1,
-      stagger: 0.3 // Cada título aparece con un retraso de 0.3s
+      stagger: 0.3 
     }, 0.2);
 
-    // Animación para las imágenes con clipPath ajustado
     tl.to(".hero-img", {
       opacity: 1,
       y: 0,
-      clipPath: "polygon(0 -20%, 100% -20%, 100% 120%, 0 120%)", // Extendemos más allá de los bordes
+      clipPath: "polygon(0 -20%, 100% -20%, 100% 120%, 0 120%)", 
       duration: 1.2,
       stagger: 0.2
-    }, 0.5); // Comienza 0.5s después del inicio
+    }, 0.5);
 
-    // Animación para el texto (solo hacemos que aparezca)
     tl.to(".hero-text", {
       opacity: 1,
       duration: 0.5,
-      onComplete: paragraphs // Llamamos a la función paragraphs cuando el texto sea visible
-    }, 1); // Comienza 1s después del inicio
+      onComplete: paragraphs
+    }, 1);
   }
 
   // Función para inicializar todo
   function init() {
     initAnimation();
-    animateTitles(); // Inicializar la animación de títulos con clase animTitle
+    animateTitles(); 
     
-    // Solo refrescamos ScrollTrigger si estamos en desktop
     if (isDesktop()) {
-      // Usamos un timeout para asegurarnos de que se ejecute después de otras inicializaciones
       setTimeout(() => {
         ScrollTrigger.refresh();
       }, 100);
     }
   }
 
-  // Función para manejar cambios de tamaño de ventana
   function handleResize() {
-    // Obtener todos los ScrollTriggers creados por este componente
     const ourTriggers = ScrollTrigger.getAll().filter(st => {
-      // Solo eliminamos los ScrollTriggers que tienen IDs que comienzan con 'paragraph-' o 'animTitle-'
+      
       return st.vars.id && (
         st.vars.id.startsWith('paragraph-') || 
         st.vars.id.startsWith('animTitle-')
       );
     });
     
-    // Eliminar solo nuestros ScrollTriggers
     ourTriggers.forEach(st => st.kill());
     
-    // Eliminar solo nuestras animaciones
     gsap.killTweensOf(".hero-title, .hero-img, .hero-text, .animTitle");
     
-    // Reinicializar nuestras animaciones
     init();
   }
 
-  // Usar el evento astro:page-load para que funcione con la navegación de Astro
+  
   document.addEventListener('astro:page-load', init);
 
-  // También mantener el DOMContentLoaded para la carga inicial
   document.addEventListener('DOMContentLoaded', () => {
-    // Verificar si estamos usando View Transitions de Astro
     if (!document.querySelector('html')?.hasAttribute('data-astro-transition')) {
       init();
     }
   });
 
-  // Actualizar cuando cambie el tamaño de la ventana, con debounce para evitar llamadas excesivas
   let resizeTimeout;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
