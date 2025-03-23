@@ -182,6 +182,11 @@ export function DOMReady() {
 }
 
 //-----------------------------
+   // Función para verificar si estamos en desktop (ancho > 1200px)
+   function isDesktop() {
+    return window.innerWidth > 1200;
+  }
+
   // Función para envolver cada palabra en un span
   function wrapEachWord(paragraph) {
     const content = paragraph.innerHTML;
@@ -194,6 +199,9 @@ export function DOMReady() {
 
   // Función para animar párrafos palabra por palabra
   function paragraphs() {
+    // Si no estamos en desktop, no aplicamos la animación
+    if (!isDesktop()) return;
+
     const paragraphs = Array.from(document.querySelectorAll(".hero-text p"));
 
     paragraphs.forEach((paragraph) => {
@@ -232,6 +240,9 @@ export function DOMReady() {
 
   // Nueva función para animar títulos con la clase animTitle
   function animateTitles() {
+    // Si no estamos en desktop, no aplicamos la animación
+    if (!isDesktop()) return;
+
     const animTitles = document.querySelectorAll(".animTitle");
     
     animTitles.forEach((title) => {
@@ -265,6 +276,16 @@ export function DOMReady() {
 
   // Función de inicialización de la animación principal
   function initAnimation() {
+    // Si no estamos en desktop, hacemos visibles los elementos sin animación
+    if (!isDesktop()) {
+      gsap.set(".hero-title, .hero-img, .hero-text, .animTitle", { 
+        opacity: 1,
+        clipPath: "none",
+        y: 0
+      });
+      return;
+    }
+
     // Crear una timeline para coordinar las animaciones
     const tl = gsap.timeline({
       defaults: { 
@@ -316,8 +337,21 @@ export function DOMReady() {
   function init() {
     initAnimation();
     animateTitles(); // Inicializar la animación de títulos con clase animTitle
-    // Asegurarse de que ScrollTrigger se actualice después de la animación
-    ScrollTrigger.refresh();
+    
+    // Solo refrescamos ScrollTrigger si estamos en desktop
+    if (isDesktop()) {
+      ScrollTrigger.refresh();
+    }
+  }
+
+  // Función para manejar cambios de tamaño de ventana
+  function handleResize() {
+    // Limpiar todas las animaciones y ScrollTriggers existentes
+    ScrollTrigger.getAll().forEach(st => st.kill());
+    gsap.killTweensOf(".hero-title, .hero-img, .hero-text, .animTitle");
+    
+    // Reinicializar todo
+    init();
   }
 
   // Usar el evento astro:page-load para que funcione con la navegación de Astro
@@ -331,7 +365,5 @@ export function DOMReady() {
     }
   });
 
-  // Actualizar ScrollTrigger cuando cambie el tamaño de la ventana
-  window.addEventListener('resize', () => {
-    ScrollTrigger.refresh();
-  });
+  // Actualizar cuando cambie el tamaño de la ventana
+  window.addEventListener('resize', handleResize);
