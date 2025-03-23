@@ -182,8 +182,8 @@ export function DOMReady() {
 }
 
 //-----------------------------
-   // Función para verificar si estamos en desktop (ancho > 1200px)
-   function isDesktop() {
+     // Función para verificar si estamos en desktop (ancho > 1200px)
+  function isDesktop() {
     return window.innerWidth > 1200;
   }
 
@@ -215,6 +215,9 @@ export function DOMReady() {
         paddingTop: "0.2em", // permite que se vean los acentos
       });
       
+      // Crear un ID único para este ScrollTrigger
+      const triggerId = `paragraph-${Math.random().toString(36).substr(2, 9)}`;
+      
       gsap
         .timeline({
           scrollTrigger: {
@@ -223,6 +226,7 @@ export function DOMReady() {
             end: "center center",
             markers: false,
             pin: false,
+            id: triggerId, // Asignar ID para poder eliminarlo específicamente
             scrub: isAutoanim ? false : 2,
             toggleActions: "play none none reverse", // onEnter / onLeave / onEnterBack / onLeaveBack
           },
@@ -245,7 +249,7 @@ export function DOMReady() {
 
     const animTitles = document.querySelectorAll(".animTitle");
     
-    animTitles.forEach((title) => {
+    animTitles.forEach((title, index) => {
       // Configuración inicial
       gsap.set(title, { 
         opacity: 0,
@@ -254,6 +258,9 @@ export function DOMReady() {
         overflow: "visible"
       });
       
+      // Crear un ID único para este ScrollTrigger
+      const triggerId = `animTitle-${index}`;
+      
       // Crear timeline para cada título
       gsap.timeline({
         scrollTrigger: {
@@ -261,6 +268,7 @@ export function DOMReady() {
           start: "top bottom-=100", // Comienza cuando el título está 100px por debajo de la ventana
           end: "top center", // Termina cuando el título está en el centro de la ventana
           markers: false,
+          id: triggerId, // Asignar ID para poder eliminarlo específicamente
           toggleActions: "play none none reverse", // play on enter, reverse on leave back
         }
       })
@@ -340,17 +348,31 @@ export function DOMReady() {
     
     // Solo refrescamos ScrollTrigger si estamos en desktop
     if (isDesktop()) {
-      ScrollTrigger.refresh();
+      // Usamos un timeout para asegurarnos de que se ejecute después de otras inicializaciones
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 100);
     }
   }
 
   // Función para manejar cambios de tamaño de ventana
   function handleResize() {
-    // Limpiar todas las animaciones y ScrollTriggers existentes
-    ScrollTrigger.getAll().forEach(st => st.kill());
+    // Obtener todos los ScrollTriggers creados por este componente
+    const ourTriggers = ScrollTrigger.getAll().filter(st => {
+      // Solo eliminamos los ScrollTriggers que tienen IDs que comienzan con 'paragraph-' o 'animTitle-'
+      return st.vars.id && (
+        st.vars.id.startsWith('paragraph-') || 
+        st.vars.id.startsWith('animTitle-')
+      );
+    });
+    
+    // Eliminar solo nuestros ScrollTriggers
+    ourTriggers.forEach(st => st.kill());
+    
+    // Eliminar solo nuestras animaciones
     gsap.killTweensOf(".hero-title, .hero-img, .hero-text, .animTitle");
     
-    // Reinicializar todo
+    // Reinicializar nuestras animaciones
     init();
   }
 
@@ -365,5 +387,9 @@ export function DOMReady() {
     }
   });
 
-  // Actualizar cuando cambie el tamaño de la ventana
-  window.addEventListener('resize', handleResize);
+  // Actualizar cuando cambie el tamaño de la ventana, con debounce para evitar llamadas excesivas
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(handleResize, 250);
+  });
