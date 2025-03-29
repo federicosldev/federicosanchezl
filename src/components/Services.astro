@@ -214,72 +214,63 @@
         if (isMobile) {
             return;
         }
+
         const serviceImage = document.querySelector('.service-image');
         const serviceItems = document.querySelectorAll('.service-item');
         const img = serviceImage.querySelector('img');
 
-        let currentX = 0;
-        let currentY = 0;
+        let isVisible = false; // Controla si la imagen ya está visible
 
         function updateImagePosition(e) {
-            currentX = e.clientX + 20;
-            currentY = e.clientY + 20;
             gsap.to(serviceImage, {
-                x: currentX,
-                y: currentY,
+                x: e.clientX + 20,
+                y: e.clientY + 20,
                 duration: 0.3,
                 ease: 'power2.out',
             });
         }
-
-        const tl = gsap.timeline({ paused: true });
-
-        tl.fromTo(
-            serviceImage,
-            {
-                opacity: 0,
-                scale: 0.8,
-                rotation: -15,
-            },
-            {
-                opacity: 1,
-                scale: 1,
-                rotation: -5,
-                duration: 0.5,
-                ease: 'back.out(1.7)',
-            },
-        );
 
         serviceItems.forEach(item => {
             item.addEventListener('mouseenter', e => {
                 const imageUrl = item.dataset.image;
                 img.src = imageUrl;
                 updateImagePosition(e);
-                tl.restart();
+
+                if (!isVisible) {
+                    gsap.to(serviceImage, {
+                        opacity: 1,
+                        scale: 1,
+                        rotation: -5,
+                        duration: 0.5,
+                        ease: 'back.out(1.7)',
+                    });
+                    isVisible = true;
+                }
             });
 
             item.addEventListener('mousemove', updateImagePosition);
 
             item.addEventListener('mouseleave', () => {
-                gsap.to(serviceImage, {
-                    opacity: 0,
-                    scale: 0.8,
-                    rotation: -15,
-                    duration: 0.3,
-                    ease: 'power2.in',
-                });
+                // Esperamos un pequeño tiempo antes de ocultar la imagen, por si el usuario pasa rápidamente sobre otro item
+                setTimeout(() => {
+                    if (![...serviceItems].some(el => el.matches(':hover'))) {
+                        gsap.to(serviceImage, {
+                            opacity: 0,
+                            scale: 0.8,
+                            rotation: -15,
+                            duration: 0.3,
+                            ease: 'power2.in',
+                            onComplete: () => {
+                                isVisible = false;
+                            },
+                        });
+                    }
+                }, 50); // Pequeño retraso para verificar si otro item tiene hover
             });
         });
     }
 
     function setupAnimation() {
-        // Limpiar eventos anteriores si existen
-        const serviceItems = document.querySelectorAll('.service-item');
-        serviceItems.forEach(item => {
-            item.removeEventListener('mouseenter', null);
-            item.removeEventListener('mousemove', null);
-            item.removeEventListener('mouseleave', null);
-        });
         initServiceAnimation();
     }
 
