@@ -2,19 +2,19 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import compress from 'astro-compress';
 
+import sitemap from '@astrojs/sitemap';
+
 export default defineConfig({
-  integrations: [
-    tailwind({
-      config: { mode: 'jit' }
-    }),
-    compress({
-      css: true,
-      html: true,
-      img: true,
-      js: true,
-      svg: true,
-    }),
-  ],
+  site: 'https://federicosanchezl.com',
+  integrations: [sitemap(), tailwind({
+    config: { mode: 'jit' }
+  }), compress({
+    css: true,
+    html: true,
+    img: true,
+    js: true,
+    svg: true,
+  }), sitemap()],
   output: 'static',
   compressHTML: true,
   
@@ -67,4 +67,3 @@ export default defineConfig({
     ],
   },
 });
-

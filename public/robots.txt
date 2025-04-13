@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://federicosanchezl.com/sitemap-index.xml
