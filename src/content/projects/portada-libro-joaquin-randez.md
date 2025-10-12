@@ -22,4 +22,4 @@ El diseño final utiliza una **paleta de colores cálidos y pastel** que transmi
 
 - **Desarrollo de propuestas:** creación de dos líneas gráficas distintas (fotográfica e ilustrada) enfocadas en transmitir autenticidad y autocuidado.
 
-- **Diseño final:** refinamiento de la ilustración, selección tipográfica, definición cromática y preparación del arte final para impresión y mockups.
+- **Diseño final:** refinamiento de la ilustración, selección tipográfica, definición cromática y preparación del diseño final y mockups.
