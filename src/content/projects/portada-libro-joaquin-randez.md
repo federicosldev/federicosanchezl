@@ -3,7 +3,7 @@ name: Libro Joaquín Rández
 type: Diseño Gráfico
 img: portada-libro-joaquin-randez.webp
 img2: portada-libro-joaquin-randez-1.webp
-tag1: Diseño Gráfico
+tag1: Creatividad
 tag2: Editorial
 stack: Illustrator
 ---
