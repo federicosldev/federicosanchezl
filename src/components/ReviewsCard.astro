@@ -16,24 +16,28 @@ const reviews = await getCollection('reviews');
                 return (
                     <div class="swiper-slide" key={index}>
                         <article class="grid grid-cols-1 sm:grid-cols-2 items-center text-primary-purple min-h-[300px] sm:min-h-[400px]">
-                            <div class="sm:ml-14 flex flex-col justify-between">
-                                <p class="text-base sm:text-2xl text-primary-purple flex-grow">
+                            
+                            <!-- Contenedor del TEXTO: Abajo en móvil (order-2), Izquierda en escritorio (sm:order-1) -->
+                            <div class="order-2 sm:order-1 sm:ml-14 flex flex-col justify-between mt-6 sm:mt-0">
+                                <p class="text-base sm:text-2xl text-primary-purple flex-grow text-center sm:text-left">
                                     {message}
                                 </p>
                             </div>
-                            <div class="flex flex-col items-center justify-center p-6">
+                            
+                            <div class="order-1 sm:order-2 flex flex-col items-center justify-center p-6 sm:p-6 p-0">
                                 <img
                                     src={`/${img}`}
                                     alt={name}
-                                    class="w-40 sm:w-72 rounded-full object-cover mb-4 border-[20px] sm:border-[30px] border-primary-purple"
+                                    class="w-40 sm:w-72 rounded-full object-cover mb-4 border-[15px] sm:border-[30px] border-primary-purple"
                                 />
-                                <h3 class="text-4xl sm:text-4xl uppercase">
+                                <h3 class="text-4xl sm:text-4xl uppercase text-center">
                                     {name}
                                 </h3>
-                                <p class="text-primary-purple text-xl sm:text-2xl">
+                                <p class="text-primary-purple text-xl sm:text-2xl text-center">
                                     {cargo}
                                 </p>
                             </div>
+
                         </article>
                     </div>
                 );
@@ -43,7 +47,7 @@ const reviews = await getCollection('reviews');
 
     <div class="swiper-button-next"></div>
     <div class="swiper-button-prev"></div>
-    <div class="swiper-pagination"></div>
+    <div class="swiper-pagination hidden"></div>
 </div>
 
 <!-- Importante: is:inline asegura que el script se ejecute en el orden correcto -->
